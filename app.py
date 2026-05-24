@@ -1,145 +1,115 @@
 import streamlit as st
+import requests
 import phonenumbers
 from phonenumbers import geocoder, carrier
-import requests
+import time
 
-# 1. Page Configuration & Custom Theme Styling
-st.set_page_config(page_title="CyberSuite Dashboard", page_icon="⚡", layout="wide")
+# 1. Page Configuration (Sets the browser tab title and dark mode)
+st.set_page_config(page_title="CyberSuite Alpha", page_icon="🛡️", layout="wide")
 
-# Custom CSS to make it look like a sleek terminal/hacker app
+# 2. UI Injection (FIXED: unsafe_allow_html)
 st.markdown("""
     <style>
-    .main { background-color: #0e1117; }
-    h1, h2, h3 { color: #00ff66 !important; font-family: 'Courier New', monospace; }
-    .stButton>button { background-color: #1f2937; color: #00ff66; border: 1px solid #00ff66; font-family: 'Courier New', monospace; }
-    .stButton>button:hover { background-color: #00ff66; color: #1e293b; }
+    /* Hacker-style terminal aesthetics */
+    .stButton>button {
+        border: 1px solid #00ff00;
+        color: #00ff00;
+        background-color: transparent;
+        border-radius: 5px;
+    }
+    .stButton>button:hover {
+        background-color: #00ff00;
+        color: #000000;
+    }
     </style>
-    """, unsafe_allowed_html=True)
+""", unsafe_allow_html=True)
 
-# 2. Sidebar Navigation Area
-st.sidebar.title("⚡ CyberSuite v1.0")
+# 3. Sidebar Navigation
+st.sidebar.title("⚡ CyberSuite")
 st.sidebar.markdown("---")
-menu = st.sidebar.radio(
-    "Select Utility:", 
-    ["🏠 Main Dashboard", "🔍 Infrastructure Tracker", "📞 Phone Metadata Lookup", "🤖 CyberBot AI Assistant"]
-)
-st.sidebar.markdown("---")
-st.sidebar.info("Designed safely for educational cybersecurity workflows.")
+menu = st.sidebar.radio("Terminal Modules", ["Command Center", "IP Reconnaissance", "Phone OSINT", "CyberBot AI"])
 
-# 🏠 SCREEN 1: Main Dashboard
-if menu == "🏠 Main Dashboard":
-    st.title("📟 Core Security Terminal")
-    st.write("Welcome to your unified workspace. Choose a pipeline utility from the sidebar menu.")
-    
-    # Grid layout for metrics
-    col1, col2, col3 = st.columns(3)
-    with col1:
-        st.metric(label="App Framework", value="Streamlit Engine")
-    with col2:
-        st.metric(label="Core Logic Status", value="Active / Secure")
-    with col3:
-        st.metric(label="Local API Access", value="Online")
-        
-    st.markdown("### 📋 Session Logs")
-    st.code("[INFO] 12-Year-Old Developer initialized engine.\n[SUCCESS] Web socket bound to port 8501.\n[READY] Awaiting target data strings...")
+# 4. Modules Logic
 
-# 🔍 SCREEN 2: Infrastructure Tracker (IP Lookup)
-elif menu == "🔍 Infrastructure Tracker":
-    st.title("🔍 Target Network Registry Lookup")
-    st.write("Extract public server hosting data from global internet registries safely.")
-    
-    # Using an expansive container layout to keep it organized
-    with st.container():
-        ip_input = st.text_input("Input Target Public IP Address:", placeholder="e.g., 8.8.8.8")
-        
-        if st.button("Query Registry"):
-            if ip_input:
-                with st.spinner("Decoding infrastructure packets..."):
-                    try:
-                        response = requests.get(f"https://ipapi.co/{ip_input}/json/", timeout=5)
-                        data = response.json()
-                        
-                        if "error" in data:
-                            st.error(f"Registry Refusal: {data.get('reason')}")
-                        else:
-                            st.markdown("### 📊 Extracted Target Matrix")
-                            c1, c2 = st.columns(2)
-                            with c1:
-                                st.info(f"**ISP Engine:** {data.get('org')}")
-                                st.success(f"**Target City:** {data.get('city')}, {data.get('region')}")
-                            with c2:
-                                st.warning(f"**Geographic Sovereign:** {data.get('country_name')}")
-                                st.error(f"**System ASN Block:** {data.get('asn')}")
-                    except Exception as e:
-                        st.error(f"Connection timed out: {e}")
-            else:
-                st.warning("Data input register empty. Please type an IP address.")
+if menu == "Command Center":
+    st.title("🛡️ Command Center")
+    st.markdown("Welcome to CyberSuite Alpha. Select a module from the sidebar to initialize testing.")
+    st.code("System Status: ONLINE\nConnection: SECURE\nModules: LOADED\nTarget: NONE")
 
-# 📞 SCREEN 3: Phone Metadata Lookup
-elif menu == "📞 Phone Metadata Lookup":
-    st.title("📞 Telecom Block Analyzer")
-    st.write("Query international telecommunication structures for validation metrics.")
+elif menu == "IP Reconnaissance":
+    st.title("🌐 IP Reconnaissance")
+    st.markdown("Map target IP addresses to physical locations and ISPs.")
     
-    with st.container():
-        user_input = st.text_input("Input Target Phone String:", placeholder="Must include country code, e.g., +14155552671")
-        
-        if st.button("Parse Telecom Record"):
-            if user_input:
+    ip_target = st.text_input("Enter Target IP Address (e.g., 8.8.8.8)")
+    
+    if st.button("Analyze Infrastructure"):
+        if ip_target:
+            with st.spinner("Querying global registries..."):
                 try:
-                    parsed_num = phonenumbers.parse(user_input, None)
-                    if phonenumbers.is_valid_number(parsed_num):
-                        loc = geocoder.description_for_number(parsed_num, "en")
-                        comp = carrier.name_for_number(parsed_num, "en")
-                        
-                        st.markdown("### 📡 Telecom Metrics")
-                        res_col1, res_col2 = st.columns(2)
-                        with res_col1:
-                            st.success(f"**Registration Block Location:** {loc if loc else 'Unknown Subnet'}")
-                        with res_col2:
-                            st.info(f"**Carrier Route Assignment:** {comp if comp else 'Virtual/VoIP Entity'}")
+                    # Using a free public API for IP lookup
+                    response = requests.get(f"http://ipapi.co/{ip_target}/json/")
+                    data = response.json()
+                    
+                    if "error" not in data:
+                        st.success("Target Locked")
+                        col1, col2 = st.columns(2)
+                        with col1:
+                            st.write(f"**Target IP:** {data.get('ip')}")
+                            st.write(f"**City:** {data.get('city')}")
+                            st.write(f"**Region:** {data.get('region')}")
+                        with col2:
+                            st.write(f"**Country:** {data.get('country_name')}")
+                            st.write(f"**ISP / Org:** {data.get('org')}")
                     else:
-                        st.error("Syntax Error: Phone number structure is invalid.")
+                        st.error("Invalid IP address or local network IP.")
                 except Exception as e:
-                    st.error(f"Failed to load dataset frame: {e}")
-            else:
-                st.warning("Data input register empty. Input numeric string.")
-
-# 🤖 SCREEN 4: AI CyberBot Assistant
-elif menu == "🤖 CyberBot AI Assistant":
-    st.title("🤖 CyberBot Command Intelligence")
-    st.write("Ask questions about complex commands, flags, or status logs.")
-    
-    # Setting up localized chatbot conversation boxes
-    user_query = st.text_input("Ask CyberBot (e.g., 'What is dirb?', 'What is an IP?'):", placeholder="Type educational request...")
-    
-    if st.button("Execute AI Context Query"):
-        if user_query:
-            query_lower = user_query.lower()
-            st.markdown("### 💬 System Response Terminal")
-            
-            # Simulated AI "Brain" Logic matching user questions
-            with st.spinner("Processing language tokens..."):
-                if "dirb" in query_lower:
-                    st.code("🤖 CyberBot Engine Response:\n\n"
-                            "DIRB (Directory Buster) is a reconnaissance web scanner.\n"
-                            "It tries to discover hidden files or directories on a website.\n"
-                            "Mechanism: It takes a list of common names (like /admin, /backup, /login) "
-                            "and appends them to the end of the URL to see if the server says 'Yes, this page exists!'.\n"
-                            "Safe Practice: Never run this on websites you do not own or have written permission to test.")
-                elif "ip" in query_lower or "address" in query_lower:
-                    st.code("🤖 CyberBot Engine Response:\n\n"
-                            "An IP (Internet Protocol) Address is like a mailing address for computers.\n"
-                            "Just like a mailman needs your house address to deliver a package, your router "
-                            "needs an IP address to know where to send video streams, web pages, and data packets.")
-                elif "ping" in query_lower:
-                    st.code("🤖 CyberBot Engine Response:\n\n"
-                            "The 'ping' command checks if a target computer or server is awake and responsive.\n"
-                            "It sends a tiny 'Hello!' packet and measures exactly how many milliseconds it takes "
-                            "for the target to shout 'I am here!' back to you. Excellent for network troubleshooting.")
-                else:
-                    st.code(f"🤖 CyberBot Engine Response:\n\n"
-                            f"Acknowledged query: '{user_query}'\n"
-                            f"I am running on your local engine. I am ready to explain security terminology.\n"
-                            f"Try asking specifically about commands like 'dirb', 'ping', or 'IP addresses'!")
+                    st.error("Network routing error. Please try again.")
         else:
-            st.warning("Input request buffer empty.")
+            st.warning("Awaiting Target IP input.")
+
+elif menu == "Phone OSINT":
+    st.title("📱 OSINT Phone Validator")
+    st.markdown("Extract telecom registry metadata from public phone networks.")
+    
+    phone_input = st.text_input("Enter Phone Number (Include country code, e.g., +14155552671)")
+    
+    if st.button("Extract Metadata"):
+        if phone_input:
+            with st.spinner("Querying telecom nodes..."):
+                try:
+                    parsed_num = phonenumbers.parse(phone_input)
+                    if phonenumbers.is_valid_number(parsed_num):
+                        region = geocoder.description_for_number(parsed_num, "en")
+                        network = carrier.name_for_number(parsed_num, "en")
+                        
+                        st.success("Data Extraction Complete")
+                        st.write(f"**Standardized Format:** {phonenumbers.format_number(parsed_num, phonenumbers.PhoneNumberFormat.INTERNATIONAL)}")
+                        st.write(f"**Geographic Registration:** {region if region else 'Data Unavailable'}")
+                        st.write(f"**Telecom Carrier:** {network if network else 'Unknown / VoIP / Virtual'}")
+                    else:
+                        st.error("Number format invalid. Did you include the '+' and country code?")
+                except Exception as e:
+                    st.error("Failed to parse string. Ensure strict E.164 formatting.")
+        else:
+            st.warning("Awaiting Phone Number input.")
+
+elif menu == "CyberBot AI":
+    st.title("🤖 CyberBot Assistant")
+    st.markdown("Educational assistant for command breakdowns and network theory.")
+    
+    user_query = st.text_input("Terminal Input:")
+    
+    if st.button("Ask CyberBot"):
+        if user_query:
+            with st.spinner("Processing query..."):
+                time.sleep(1) # Simulated thinking delay
+                
+                # Hardcoded educational responses for testing
+                if "dirb" in user_query.lower():
+                    st.info("**CyberBot:** `dirb` is a web content scanner. It looks for hidden directories and files on a web server by launching a dictionary-based attack (testing thousands of common folder names like '/admin' or '/backup') and analyzing the HTTP response codes.")
+                elif "ping" in user_query.lower():
+                    st.info("**CyberBot:** `ping` is a basic network diagnostic tool. It sends a tiny packet of data (an ICMP Echo Request) to a target IP. If the target is online and not blocking pings, it bounces the packet back, telling you exactly how many milliseconds the round-trip took.")
+                else:
+                    st.info(f"**CyberBot:** I am currently running in offline simulation mode. You asked about: '{user_query}'. Hook me up to a live LLM API to get real-time dynamic answers!")
+        else:
+            st.warning("Awaiting query.")
