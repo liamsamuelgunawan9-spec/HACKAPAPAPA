@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="./node_modules/blockly/blockly_compressed.js"></script>
+    <script src="./node_modules/blockly/blocks_compressed.js"></script>
+    <script src="./node_modules/blockly/msg/en.js"></script>
+</head>
+<body>
+    <div id="blocklyDiv" style="height: 480px; width: 800px;"></div>
+    <script>
+        var workspace = Blockly.inject('blocklyDiv', {
+            toolbox: {
+                "kind": "flyoutToolbox",
+                "contents": [
+                    { "kind": "block", "type": "controls_if" },
+                    { "kind": "block", "type": "logic_compare" }
+                ]
+            }
+        });
+    </script>
+</body>
+</html>

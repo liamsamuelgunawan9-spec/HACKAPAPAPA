@@ -3,7 +3,19 @@ import requests
 import phonenumbers
 from phonenumbers import geocoder, carrier
 import time
+import streamlit as st
+import streamlit.components.v1 as components
 
+st.title("HackAPP: Visual Pentest Builder")
+
+# Read the HTML file and embed it
+with open("templates/blockly.html", "r") as f:
+    html_content = f.read()
+
+components.html(html_content, height=500)
+
+if st.button("Run Program"):
+    st.write("Executing blocks...")
 # 1. Page Configuration (Sets the browser tab title and dark mode)
 st.set_page_config(page_title="CyberSuite Alpha", page_icon="🛡️", layout="wide")
 
